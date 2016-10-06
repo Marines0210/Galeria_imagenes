@@ -9,6 +9,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,131 +25,69 @@ import android.widget.ImageView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.support.v7.widget.RecyclerView;
+
+import com.bumptech.glide.Glide;
+
+import java.util.ArrayList;
+
+/**
+ * Created by Marines on 13/09/2016.
+ */
+
 
 @TargetApi(Build.VERSION_CODES.HONEYCOMB)
 public class DialogFragmentComidas extends DialogFragment {
-	Integer[]IDimagenes;
-	Gallery gallery;
+	RecyclerView RecyclerGaleria;
 	ImageView imageView;
-	View v ;
+	View v;
 	TextView titulo;
+	RecyclerView.Adapter adaptador;
+	private ArrayList<Menu> listaMenu;
+
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-			Bundle savedInstanceState) {
-		
-		 v = inflater.inflate(R.layout.fragment_comidas, null);
-		//Arreglo con el identificador del drawable
-		IDimagenes = new Integer[]{R.drawable.crepa1, R.drawable.crepa2, R.drawable.crepa3,
-				R.drawable.crepa4};
+							 Bundle savedInstanceState) {
+		v = inflater.inflate(R.layout.fragment_comidas, null);
 
-		titulo=(TextView) v.findViewById(R.id.titulo);
+		titulo = (TextView) v.findViewById(R.id.titulo);
 		//llamamos nuestra imagenview
-		imageView=(ImageView)v.findViewById(R.id.image);
-
-		//llamamos la galeria
-		gallery=(Gallery)v.findViewById(R.id.gallery1);
-
-		//Creamos un adaptador para la galeria
-		gallery.setAdapter(new ImageAdapter());
-
-		//funcion onclick en la galeria
-		gallery.setOnItemClickListener(new OnItemClickListener(){
-		public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
-
-
-			//al dar clic en la galeria la imagen se agregara al imageView
-				titulo.setText("Crepa "+position);
-				imageView.setImageResource(IDimagenes[position]);
-
-		}
-		
-	});
-
+		imageView = (ImageView) v.findViewById(R.id.image);
+		titulo.setText("Postres");
+		RecyclerGaleria = (RecyclerView) v.findViewById(R.id.galeria);
 		//Funcion onclik en la imagen
 		imageView.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
-				try{
+				try {
 					//Al dar clic en la imagen se cerrara el DialogFragment
 					dismiss();
-				
-				}catch(Exception e){
-					
+				} catch (Exception e) {
+
 					e.printStackTrace();
-					
 				}
 			}
 		});
 
+		//para crear nuestro diseño personalizado le agregamos a nuestro recyclerlinearlayoutmanager de manera horizontal
+		//True es para que se muestre en el ultimo item agregado en el recicler y false es para que se muestre en el primer item
+		RecyclerGaleria.setLayoutManager(new LinearLayoutManager(getContext(),LinearLayoutManager.HORIZONTAL,false));
+
+		//Obtenemos la lista del menu
+		listaMenu=new Menu().listamenu();
+
+		if (listaMenu != null) {
+			//Creamos nuestro adaptador
+			adaptador = new RecyclerAdapter(listaMenu,new RecyclerAdapter.OnclickRecycler() {
+				@Override
+				public void onClickitemRecycler(Menu v) {
+					//glide como dije anteriormente para evitar que se alente al mostrar la imagen
+					Glide.with(getContext()).load(v.getIdImagen()).into(imageView);
+					titulo.setText(v.getTitulo());
+				}
+			});
+		}
+		//Agregamos el adaptador
+		RecyclerGaleria.setAdapter(adaptador);
 		return v;
-	}
-
-	//adaptador de imagen
-	public class ImageAdapter extends BaseAdapter{
-
-		private int itemBackground;
-		public ImageAdapter(){
-
-
-			//Este atributo es de android solo tenemos que mandarlo a llamar
-			//Creamos un nuevo atributo para el fondo de los elementos de la galeria y  obtenemos el valor del atributo
-		TypedArray a = getContext().obtainStyledAttributes(R.styleable.Galeria);
-
-			//obtenemos el id del la galeria
-		itemBackground = a.getResourceId(R.styleable.Galeria_android_galleryItemBackground,0);
-		a.recycle();
-			
-			
-		}
-
-
-		public int getCount() {
-			// TODO Auto-generated method stub
-
-			//retornamos la cantidad de imagenes que tenemos en el arreglo
-			return IDimagenes.length;
-		}
-
-		public Object getItem(int position) {
-			// TODO Auto-generated method stub
-			return position;
-		}
-
-		public long getItemId(int position) {
-			// TODO Auto-generated method stub
-			return position;
-		}
-
-		public View getView(int position, View convertView, ViewGroup parent) {
-
-			//Creamos un imagenview
-			ImageView imageView= new ImageView(getContext());
-			//para que se visualice completa la imagen
-			imageView.setScaleType(ImageView.ScaleType.FIT_XY);
-
-			//Esto nos servira para agregar las imagenes al imagenview de la galeria
-			imageView.setImageResource(IDimagenes[position]);
-
-
-			//esta es una manera para adaptar elementos que estamos creando en codigo
-			//adaptar la imagen a la pantalla
-			DisplayMetrics metrics = new DisplayMetrics();
-			getActivity().getWindowManager().getDefaultDisplay().getMetrics(metrics);
-			int width = metrics.widthPixels; // ancho absoluto en pixels
-			int height = metrics.heightPixels; // alto absoluto en pixels
-
-			int width2=width/2;
-			int height2=height/5;
-
-
-			imageView.setLayoutParams(new Gallery.LayoutParams(width2,height2));
-
-			//agregamos el fondo que tendra el imagenview
-			imageView.setBackgroundResource(itemBackground);
-
-			//retornamos la imagen
-			return imageView;
-		}
-
-		
 	}
 }

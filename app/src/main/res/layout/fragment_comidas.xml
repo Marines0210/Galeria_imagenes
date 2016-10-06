@@ -14,7 +14,6 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceLarge"
             android:text=""
             android:textSize="30sp"
             android:id="@+id/titulo"
@@ -29,13 +28,15 @@
             android:scaleType="fitXY"
             android:src="@drawable/salir" />
 
-        <Gallery
-            android:id="@+id/gallery1"
+        <android.support.v7.widget.RecyclerView
+            android:scrollbars="horizontal"
+            android:scrollbarStyle="outsideInset"
+            android:id="@+id/galeria"
             android:layout_width="match_parent"
             android:layout_height="@dimen/alto"
             android:layout_weight="2"
-            android:layout_gravity="center_horizontal"
-            android:gravity="center_vertical|center_horizontal" />
+            android:gravity="center_vertical|center_horizontal">
+        </android.support.v7.widget.RecyclerView>
 
     </LinearLayout>
 

@@ -6,43 +6,33 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.TextView;
 
-
+/**
+ * Created by Marines on 13/09/2016.
+ */
 public class MainActivity extends AppCompatActivity {
-    ListView lv;
+
+    Button boton;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        boton=(Button) findViewById(R.id.postres);
 
 
-        //Ver tutorial android gratis video 18
-        Comidas comidas_data[]=new Comidas[]{
-          new Comidas(R.drawable.crepa,"Crepas"),
-          new Comidas(R.drawable.jugos,"Jugos"),
-          new Comidas(R.drawable.c1,"Pizzas")
-        };
-
-        ComidasAdapter adaptador=new ComidasAdapter(this,R.layout.listview_item_row,comidas_data);
-        lv=(ListView)findViewById(R.id.lv);
-        lv.setAdapter(adaptador);
-
-
-
-        lv.setOnItemClickListener(new AdapterView.OnItemClickListener(){
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view,int position,long id){
-
-                FragmentManager manager = getSupportFragmentManager();
-                DialogFragmentComidas miscuartos = new DialogFragmentComidas();
-                miscuartos.setStyle(DialogFragment.STYLE_NO_FRAME, R.style.Theme_Transparent);
-                miscuartos.show(manager, "");
-
-            }
-
-        });
+       boton.setOnClickListener(new View.OnClickListener() {
+           @Override
+           public void onClick(View v) {
+               FragmentManager manager = getSupportFragmentManager();
+               DialogFragmentComidas miscuartos = new DialogFragmentComidas();
+               miscuartos.setStyle(DialogFragment.STYLE_NO_FRAME, R.style.transparente);
+               miscuartos.show(manager, "");
+           }
+       });
 
     }
 }
